@@ -1,5 +1,5 @@
 public class TrieExceptions extends RuntimeException {
-    public TrieExceptions(Exception message) {
+    public TrieExceptions() {
         super( "Введены некорректные данныe");
     }
 }
