@@ -4,42 +4,62 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TrieTest {
 
-    Trie a = new Trie();
+    Trie<Integer> a = new Trie<>();
 
     @Test
     void insert() {
-        assertThrows(TrieExceptions.class, () -> a.insert("1234"));
-        assertThrows(TrieExceptions.class, () -> a.insert(" "));
-        assertThrows(TrieExceptions.class, () -> a.insert("asd!!!"));
-        assertThrows(TrieExceptions.class, () -> a.insert("!!!,"));
+        String normalWord = "aassad";
+        String identicalWord = "askls";
+        String normalWord2 = "als";
 
-        a.insert("aassad");
-        a.insert("askls");
-        a.insert("askls");
-        a.insert("als");
+        assertDoesNotThrow(() -> a.insert(normalWord, 2));
+        assertDoesNotThrow(() -> a.insert(identicalWord, 3));
+        assertDoesNotThrow(() -> a.insert(identicalWord, 4));
+        assertDoesNotThrow(() -> a.insert(normalWord2, 5));
+
+        //Обработка ошибок
+
+        String number = "1234";
+        String space = " ";
+        String specSymbols = "!!!";
+        assertThrows(TrieExceptions.class, () -> a.insert(number, 1));
+        assertThrows(TrieExceptions.class, () -> a.insert(space, 1));
+        assertThrows(TrieExceptions.class, () -> a.insert(specSymbols, 1));
     }
 
     @Test
     void search() {
-        a.insert("aassad");
-        assertTrue(a.search("aassad"));
-        assertFalse(a.search("asdasmfnsdfmdsf"));
-        assertFalse(a.search("aas"));
+        //узнать подробнее реализацию trie
+        String searchWord = "aassad";
+        String notInTrie = "asdasmfnsdfmdsf";
+        String notInTrie2 = "aas";
+       a.insert(searchWord, 6);
+        assertTrue(a.search(searchWord));
+        assertFalse(a.search(notInTrie));
+        assertFalse(a.search(notInTrie2));
 
-        assertThrows(TrieExceptions.class, () -> a.search("aas1123sad"));
-        assertThrows(TrieExceptions.class, () -> a.search("!!!aas1123sad"));
-        assertThrows(TrieExceptions.class, () -> a.search(",,!!!aas1123sad"));
-        assertThrows(TrieExceptions.class, () -> a.search(" "));
-        assertThrows(TrieExceptions.class, () -> a.search(" asdasd"));
+
+        //Обработка ошибок
+        String number = "1234";
+        String space = " ";
+        String specSymbols = "!!!";
+        assertThrows(TrieExceptions.class, () -> a.search(number));
+        assertThrows(TrieExceptions.class, () -> a.search(space));
+        assertThrows(TrieExceptions.class, () -> a.search(specSymbols));
 
     }
 
     @Test
     void deletion() {
-        a.insert("aassad");
-        a.deletion("aassad");
-        assertThrows(TrieExceptions.class, () -> a.deletion("1aas1sad"));
+        String deletedWord = "aassad";
+        String haventInTrie = "1aas1sad";
 
-        assertFalse(a.search("aassad"));
+        assertDoesNotThrow(() -> a.insert(deletedWord, 7));
+        assertDoesNotThrow(() -> a.deletion(deletedWord));
+        assertFalse(a.search(deletedWord));
+
+        //Обработка ошибок
+        assertThrows(TrieExceptions.class, () -> a.deletion(haventInTrie));
+
     }
 }

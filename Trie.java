@@ -1,28 +1,37 @@
 import java.util.regex.Pattern;
 
-public class Trie {
-    TrieNode root;
+public class Trie<T> {
+    TrieNode<T> root;
     final int NUMBERFIRSTLETTER = 'a';
 
-    class TrieNode {
+    static class TrieNode<T> {
         //33 or 26
-        TrieNode[] children = new TrieNode[26];
+        TrieNode<T>[] children = new TrieNode[26];
+        T data;
         boolean isWord = false;
         char value;
+
+        public TrieNode() {
+        }
+
+        public TrieNode(T data, char value) {
+            this.data = data;
+            this.value = value;
+        }
     }
 
     public Trie() {
-        this.root = new TrieNode();
+        root = new TrieNode<>();
     }
 
     public boolean search(String word) {
         if (!Pattern.compile("^[a-z]+$").matcher(word).find()) {
             throw new TrieExceptions();
         }
-        TrieNode[] current = root.children;
+        TrieNode<T>[] current = root.children;
         for (int i = 0; i < word.length(); i++) {
             int charNumber = word.charAt(i) - NUMBERFIRSTLETTER;
-            if (!charInBranch(word.charAt(i), current)) {
+            if (contain(word.charAt(i), current)) {
                 return false;
             }
             if (i == word.length() - 1 && current[charNumber].isWord) {
@@ -33,19 +42,18 @@ public class Trie {
         return false;
     }
 
-    public void insert(String word) {
+    public void insert(String word, T data) {
         if (!Pattern.compile("^[a-z]+$").matcher(word).find()) {
             throw new TrieExceptions();
         }
-        TrieNode[] current = root.children;
+        TrieNode<T>[] current = root.children;
 
         int charNumber;
         for (int i = 0; i < word.length(); i++) {
             charNumber = word.charAt(i) - NUMBERFIRSTLETTER;
 
             if (current[charNumber] == null) {
-                current[charNumber] = new TrieNode();
-                current[charNumber].value = word.charAt(i);
+                current[charNumber] = new TrieNode<>(data, word.charAt(i));
             }
             current[charNumber].value = word.charAt(i);
             if (i == word.length() - 1) {
@@ -59,10 +67,10 @@ public class Trie {
         if (!Pattern.compile("^[a-z]+$").matcher(word).find()) {
             throw new TrieExceptions();
         }
-        TrieNode[] current = root.children;
+        TrieNode<T>[] current = root.children;
         for (int i = 0; i < word.length(); i++) {
             int charNumber = word.charAt(i) - NUMBERFIRSTLETTER;
-            if (!charInBranch(word.charAt(i), current)) {
+            if (contain(word.charAt(i), current)) {
                 break;
             }
             if (i == word.length() - 1 && current[charNumber].isWord) {
@@ -76,10 +84,10 @@ public class Trie {
         }
     }
 
-    private boolean charInBranch(Character letter, TrieNode[] current) {
-        if (current[(int) (letter - NUMBERFIRSTLETTER)] == null) {
-            return false;
+    private boolean contain(Character letter, TrieNode<T>[] current) {
+        if (current[letter - NUMBERFIRSTLETTER] == null) {
+            return true;
         }
-        return (current[(int) (letter - NUMBERFIRSTLETTER)].value == letter);
+        return (current[letter - NUMBERFIRSTLETTER].value != letter);
     }
 }
