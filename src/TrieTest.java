@@ -1,4 +1,8 @@
+package src;
+
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,7 +37,7 @@ class TrieTest {
         String searchWord = "aassad";
         String notInTrie = "asdasmfnsdfmdsf";
         String notInTrie2 = "aas";
-       a.insert(searchWord, 6);
+        a.insert(searchWord, 6);
         assertTrue(a.search(searchWord));
         assertFalse(a.search(notInTrie));
         assertFalse(a.search(notInTrie2));
@@ -61,5 +65,60 @@ class TrieTest {
         //Обработка ошибок
         assertThrows(TrieExceptions.class, () -> a.deletion(haventInTrie));
 
+    }
+
+
+    @Test
+    void testSearchWithPrefix_ValidPrefix() {
+        a = new Trie<>();
+        a.insert("aa", 6);
+        a.insert("ab", 6);
+        a.insert("ac", 6);
+        a.insert("bb", 6);
+        a.insert("cc", 6);
+        ArrayList<String> result = a.searchWithPrefix("a");
+        assertEquals(3, result.size());
+        assertTrue(result.contains("aa"));
+        assertTrue(result.contains("ab"));
+        assertTrue(result.contains("ac"));
+    }
+
+    @Test
+    void testSearchWithPrefix_NonExistingPrefix() {
+        Trie<String> trie;
+        trie = new Trie<>();
+        a.insert("aa", 6);
+        a.insert("ab", 6);
+        a.insert("ac", 6);
+        a.insert("bb", 6);
+        a.insert("cc", 6);
+        ArrayList<String> result = trie.searchWithPrefix("d");
+        assertTrue(result == null);
+    }
+
+    @Test
+    void testSearchWithPrefix_EmptyPrefix() {
+        Trie<String> trie;
+        trie = new Trie<>();
+        a.insert("aa", 6);
+        a.insert("ab", 6);
+        a.insert("ac", 6);
+        a.insert("bb", 6);
+        a.insert("cc", 6);
+        assertThrows(TrieExceptions.class, () -> trie.searchWithPrefix(""));
+    }
+
+    @Test
+    void testSearchWithPrefix_InvalidPrefix() {
+        Trie<String> trie;
+        trie = new Trie<>();
+        a.insert("aa", 6);
+        a.insert("ab", 6);
+        a.insert("ac", 6);
+        a.insert("bb", 6);
+        a.insert("cc", 6);
+        assertThrows(TrieExceptions.class, () -> {
+            trie.searchWithPrefix("1");
+        });
     }
 }
