@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 public class Trie {
     private static final Pattern ALLOWED_SYMBOLS = Pattern.compile("^[a-zA-Z0-9]+$");
     TrieNode root;
-    final int NUMBERFIRSTLETTER = 'a';
 
     static class TrieNode {
         //33 or 26
@@ -28,37 +27,51 @@ public class Trie {
     }
 
     public ArrayList<String> searchWithPrefix(String key) {
-        if (!ALLOWED_SYMBOLS.matcher(key).find()) {
-            throw new TrieExceptions();
-        }
+        validateInput(key);
 
         TrieNode[] currentNode = root.children;
         ArrayList<String> ans = new ArrayList<>();
         for (int i = 0; i < key.length(); i++) {
             int charNumber = getNumberInArray(key.charAt(i));
-            if (currentNode[charNumber] == null || !contain(key.charAt(i), currentNode)) {
+            if (currentNode[charNumber] == null || !containSymbolInNode(key.charAt(i), currentNode)) {
                 return null;
             }
             currentNode = currentNode[charNumber].children;
         }
         for (var children : currentNode) {
             if (children != null) {
-                ans.add(key + children.key);
+                collectWords(children, key + children.key, ans, 5);
             }
         }
-
         return ans;
+
+    }
+
+    private void collectWords(TrieNode node, String currentWord, ArrayList<String> result, int limit) {
+        if (result.size() >= limit) {
+            return; // Остановить обход, если найдено достаточно слов
+        }
+
+        if (node.isWord) {
+            result.add(currentWord); // Добавить слово в результат
+        }
+
+        for (TrieNode child : node.children) {
+            if (child != null) {
+                collectWords(child, currentWord + child.key, result, limit);
+            }
+        }
     }
 
 
+
+
     public boolean search(String word) {
-        if (!ALLOWED_SYMBOLS.matcher(word).find()) {
-            throw new TrieExceptions();
-        }
+        validateInput(word);
         TrieNode[] current = root.children;
         for (int i = 0; i < word.length(); i++) {
             int charNumber = getNumberInArray(word.charAt(i));
-            if (current[charNumber] == null || !contain(word.charAt(i), current)) {
+            if (current[charNumber] == null || !containSymbolInNode(word.charAt(i), current)) {
                 return false;
             }
             if (i == word.length() - 1 && current[charNumber].isWord) {
@@ -70,51 +83,57 @@ public class Trie {
     }
 
     public void insert(String word) {
-        if (!ALLOWED_SYMBOLS.matcher(word).find()) {
-            throw new TrieExceptions();
-        }
-        TrieNode[] current = root.children;
+        validateInput(word);
+        TrieNode[] currentNode = root.children;
 
         int charNumber;
         for (int i = 0; i < word.length(); i++) {
              charNumber = getNumberInArray(word.charAt(i));
 
 
-            if (current[charNumber] == null) {
-                current[charNumber] = new TrieNode(word.charAt(i));
+            if (currentNode[charNumber] == null) {
+                currentNode[charNumber] = new TrieNode(word.charAt(i));
             }
-            current[charNumber].key = word.charAt(i);
+            currentNode[charNumber].key = word.charAt(i);
             if (i == word.length() - 1) {
-                current[charNumber].isWord = true;
+                currentNode[charNumber].isWord = true;
             }
-            current = current[charNumber].children;
+            currentNode = currentNode[charNumber].children;
         }
     }
 
     public void deletion(String word) {
         //todo вынести этот патерн
-        if (!ALLOWED_SYMBOLS.matcher(word).find()) {
-            throw new TrieExceptions();
-        }
-        TrieNode[] current = root.children;
+        validateInput(word);
+        TrieNode[] currentNode = root.children;
         for (int i = 0; i < word.length(); i++) {
             int charNumber = getNumberInArray(word.charAt(i));
 
-            if (current[charNumber] == null || !contain(word.charAt(i), current)) {
+            if(currentNode[charNumber] == null || !containSymbolInNode(word.charAt(i), currentNode)){
                 throw new TrieExceptions();
             }
-            if (i == word.length() - 1 && current[charNumber].isWord) {
-                current[charNumber].isWord = false;
+            if (i == word.length() - 1 && currentNode[charNumber].isWord) {
+                currentNode[charNumber].isWord = false;
             }
-            current = current[charNumber].children;
+            currentNode = currentNode[charNumber].children;
         }
     }
 
-    private boolean contain(char num, TrieNode[] current) {
+    private boolean containSymbolInNode(char num, TrieNode[] current) {
         int charNumber = getNumberInArray(num);
         return (current[charNumber].key == num);
     }
 
+    private static void validateInput(String word) {
+        if (!ALLOWED_SYMBOLS.matcher(word).find()) {
+            throw new TrieExceptions();
+        }
+    }
+
+    //Этот метод переводит номер в символе unicode по особому принципу. Чтобы ограничить количество
+    // веток в TrieNode, мы пропускаем все запрещенные символы, такие как (: ; < = > ? @) или  ([ \ ] ^ _ ` )
+    // и соответственно вычитаем количество этих элементов. Также мы начинаем 48 чтобы отсчет начинался с
+    // нулевого элемента.
     private int getNumberInArray(int num){
         // 48-57, 65-90, 97-122 включительно границы
         if (num > 47 && num < 58){ // From A letter to Z

@@ -160,8 +160,6 @@ class TrieTest {
 
     @Test
     void prefixSearchWithNumbers() {
-        //TODO Тут вопрос нужно предлагать следующую букву для ввода или сразу целое слово???
-        // Поиск по префиксу с цифрами
         a.insert("data123");
         a.insert("data456");
         a.insert("dataset789");
