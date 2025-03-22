@@ -5,20 +5,15 @@ import java.util.regex.Pattern;
 
 public class Trie {
     private static final Pattern ALLOWED_SYMBOLS = Pattern.compile("^[a-zA-Z0-9]+$");
+    public static final int WORD_LIMIT = 5;
     TrieNode root;
 
     static class TrieNode {
-        //33 or 26
+        //(33 or 26)*2 Прописные и строчные буквы в кириллице или латинице + цифры(10)
         TrieNode[] children = new TrieNode[62];
         boolean isWord = false;
         char key;
-
         public TrieNode() {
-
-        }
-        public TrieNode(char key) {
-            this.key = key;
-
         }
     }
 
@@ -40,7 +35,7 @@ public class Trie {
         }
         for (var children : currentNode) {
             if (children != null) {
-                collectWords(children, key + children.key, ans, 5);
+                collectWords(children, key + children.key, ans, WORD_LIMIT);
             }
         }
         return ans;
@@ -49,22 +44,17 @@ public class Trie {
 
     private void collectWords(TrieNode node, String currentWord, ArrayList<String> result, int limit) {
         if (result.size() >= limit) {
-            return; // Остановить обход, если найдено достаточно слов
+            return;
         }
-
         if (node.isWord) {
-            result.add(currentWord); // Добавить слово в результат
+            result.add(currentWord);
         }
-
         for (TrieNode child : node.children) {
             if (child != null) {
                 collectWords(child, currentWord + child.key, result, limit);
             }
         }
     }
-
-
-
 
     public boolean search(String word) {
         validateInput(word);
@@ -88,11 +78,10 @@ public class Trie {
 
         int charNumber;
         for (int i = 0; i < word.length(); i++) {
-             charNumber = getNumberInArray(word.charAt(i));
-
-
+            charNumber = getNumberInArray(word.charAt(i));
             if (currentNode[charNumber] == null) {
-                currentNode[charNumber] = new TrieNode(word.charAt(i));
+                currentNode[charNumber] = new TrieNode();
+                currentNode[charNumber].key = word.charAt(i);
             }
             currentNode[charNumber].key = word.charAt(i);
             if (i == word.length() - 1) {
@@ -103,7 +92,6 @@ public class Trie {
     }
 
     public void deletion(String word) {
-        //todo вынести этот патерн
         validateInput(word);
         TrieNode[] currentNode = root.children;
         for (int i = 0; i < word.length(); i++) {
