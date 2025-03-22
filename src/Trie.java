@@ -3,35 +3,34 @@ package src;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-public class Trie<T> {
-    TrieNode<T> root;
+public class Trie {
+    TrieNode root;
     final int NUMBERFIRSTLETTER = 'a';
 
-    static class TrieNode<T> {
+    static class TrieNode {
         //33 or 26
-        TrieNode<T>[] children = new TrieNode[26];
-        T data;
+        TrieNode[] children = new TrieNode[26];
+        char data;
         boolean isWord = false;
         char key;
 
         public TrieNode() {
         }
 
-        public TrieNode(T data, char value) {
+        public TrieNode(char data) {
             this.data = data;
-            this.key = value;
         }
     }
 
     public Trie() {
-        root = new TrieNode<>();
+        root = new TrieNode();
     }
 
     public ArrayList<String> searchWithPrefix(String key) {
         if (!Pattern.compile("^[a-z]+$").matcher(key).find()) {
             throw new TrieExceptions();
         }
-        TrieNode<T>[] current = root.children;
+        TrieNode[] current = root.children;
         ArrayList<String> ans = new ArrayList<>();
         for (int i = 0; i < key.length(); i++) {
             int charNumber = key.charAt(i) - NUMBERFIRSTLETTER;
@@ -54,7 +53,7 @@ public class Trie<T> {
         if (!Pattern.compile("^[a-z]+$").matcher(word).find()) {
             throw new TrieExceptions();
         }
-        TrieNode<T>[] current = root.children;
+        TrieNode[] current = root.children;
         for (int i = 0; i < word.length(); i++) {
             int charNumber = word.charAt(i) - NUMBERFIRSTLETTER;
             if (contain(word.charAt(i), current)) {
@@ -68,18 +67,18 @@ public class Trie<T> {
         return false;
     }
 
-    public void insert(String word, T data) {
+    public void insert(String word) {
         if (!Pattern.compile("^[a-z]+$").matcher(word).find()) {
             throw new TrieExceptions();
         }
-        TrieNode<T>[] current = root.children;
+        TrieNode[] current = root.children;
 
         int charNumber;
         for (int i = 0; i < word.length(); i++) {
             charNumber = word.charAt(i) - NUMBERFIRSTLETTER;
 
             if (current[charNumber] == null) {
-                current[charNumber] = new TrieNode<>(data, word.charAt(i));
+                current[charNumber] = new TrieNode(word.charAt(i));
             }
             current[charNumber].key = word.charAt(i);
             if (i == word.length() - 1) {
@@ -93,7 +92,7 @@ public class Trie<T> {
         if (!Pattern.compile("^[a-z]+$").matcher(word).find()) {
             throw new TrieExceptions();
         }
-        TrieNode<T>[] current = root.children;
+        TrieNode[] current = root.children;
         for (int i = 0; i < word.length(); i++) {
             int charNumber = word.charAt(i) - NUMBERFIRSTLETTER;
             if (contain(word.charAt(i), current)) {
@@ -110,7 +109,7 @@ public class Trie<T> {
         }
     }
 
-    private boolean contain(Character letter, TrieNode<T>[] current) {
+    private boolean contain(Character letter, TrieNode[] current) {
         if (current[letter - NUMBERFIRSTLETTER] == null) {
             return true;
         }

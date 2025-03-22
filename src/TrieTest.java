@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TrieTest {
 
-    Trie<Integer> a = new Trie<>();
+    Trie a = new Trie();
 
     @Test
     void insert() {
@@ -16,19 +16,19 @@ class TrieTest {
         String identicalWord = "askls";
         String normalWord2 = "als";
 
-        assertDoesNotThrow(() -> a.insert(normalWord, 2));
-        assertDoesNotThrow(() -> a.insert(identicalWord, 3));
-        assertDoesNotThrow(() -> a.insert(identicalWord, 4));
-        assertDoesNotThrow(() -> a.insert(normalWord2, 5));
+        assertDoesNotThrow(() -> a.insert(normalWord));
+        assertDoesNotThrow(() -> a.insert(identicalWord));
+        assertDoesNotThrow(() -> a.insert(identicalWord));
+        assertDoesNotThrow(() -> a.insert(normalWord2));
 
         //Обработка ошибок
 
         String number = "1234";
         String space = " ";
         String specSymbols = "!!!";
-        assertThrows(TrieExceptions.class, () -> a.insert(number, 1));
-        assertThrows(TrieExceptions.class, () -> a.insert(space, 1));
-        assertThrows(TrieExceptions.class, () -> a.insert(specSymbols, 1));
+        assertThrows(TrieExceptions.class, () -> a.insert(number));
+        assertThrows(TrieExceptions.class, () -> a.insert(space));
+        assertThrows(TrieExceptions.class, () -> a.insert(specSymbols));
     }
 
     @Test
@@ -37,7 +37,7 @@ class TrieTest {
         String searchWord = "aassad";
         String notInTrie = "asdasmfnsdfmdsf";
         String notInTrie2 = "aas";
-        a.insert(searchWord, 6);
+        a.insert(searchWord);
         assertTrue(a.search(searchWord));
         assertFalse(a.search(notInTrie));
         assertFalse(a.search(notInTrie2));
@@ -58,7 +58,7 @@ class TrieTest {
         String deletedWord = "aassad";
         String haventInTrie = "1aas1sad";
 
-        assertDoesNotThrow(() -> a.insert(deletedWord, 7));
+        assertDoesNotThrow(() -> a.insert(deletedWord));
         assertDoesNotThrow(() -> a.deletion(deletedWord));
         assertFalse(a.search(deletedWord));
 
@@ -70,12 +70,12 @@ class TrieTest {
 
     @Test
     void testSearchWithPrefix_ValidPrefix() {
-        a = new Trie<>();
-        a.insert("aa", 6);
-        a.insert("ab", 6);
-        a.insert("ac", 6);
-        a.insert("bb", 6);
-        a.insert("cc", 6);
+        a = new Trie();
+        a.insert("aa");
+        a.insert("ab");
+        a.insert("ac");
+        a.insert("bb");
+        a.insert("cc");
         ArrayList<String> result = a.searchWithPrefix("a");
         assertEquals(3, result.size());
         assertTrue(result.contains("aa"));
@@ -85,38 +85,38 @@ class TrieTest {
 
     @Test
     void testSearchWithPrefix_NonExistingPrefix() {
-        Trie<String> trie;
-        trie = new Trie<>();
-        a.insert("aa", 6);
-        a.insert("ab", 6);
-        a.insert("ac", 6);
-        a.insert("bb", 6);
-        a.insert("cc", 6);
+        Trie trie;
+        trie = new Trie();
+        a.insert("aa");
+        a.insert("ab");
+        a.insert("ac");
+        a.insert("bb");
+        a.insert("cc");
         ArrayList<String> result = trie.searchWithPrefix("d");
         assertTrue(result == null);
     }
 
     @Test
     void testSearchWithPrefix_EmptyPrefix() {
-        Trie<String> trie;
-        trie = new Trie<>();
-        a.insert("aa", 6);
-        a.insert("ab", 6);
-        a.insert("ac", 6);
-        a.insert("bb", 6);
-        a.insert("cc", 6);
+        Trie trie;
+        trie = new Trie();
+        a.insert("aa");
+        a.insert("ab");
+        a.insert("ac");
+        a.insert("bb");
+        a.insert("cc");
         assertThrows(TrieExceptions.class, () -> trie.searchWithPrefix(""));
     }
 
     @Test
     void testSearchWithPrefix_InvalidPrefix() {
-        Trie<String> trie;
-        trie = new Trie<>();
-        a.insert("aa", 6);
-        a.insert("ab", 6);
-        a.insert("ac", 6);
-        a.insert("bb", 6);
-        a.insert("cc", 6);
+        Trie trie;
+        trie = new Trie();
+        a.insert("aa");
+        a.insert("ab");
+        a.insert("ac");
+        a.insert("bb");
+        a.insert("cc");
         assertThrows(TrieExceptions.class, () -> {
             trie.searchWithPrefix("1");
         });
