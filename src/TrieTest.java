@@ -121,4 +121,91 @@ class TrieTest {
             trie.searchWithPrefix("1");
         });
     }
+    @Test
+    void insertMixedCaseAndNumbers() {
+        // Слова с разным регистром и цифрами
+        String lowerCaseWord = "test123";
+        String upperCaseWord = "TEST456";
+        String mixedCaseWord = "TeSt789";
+        String numbersOnly = "123456";
+        String wordWithNumbers = "12abc34";
+
+        assertDoesNotThrow(() -> a.insert(lowerCaseWord));
+        assertDoesNotThrow(() -> a.insert(upperCaseWord));
+        assertDoesNotThrow(() -> a.insert(mixedCaseWord));
+        assertDoesNotThrow(() -> a.insert(numbersOnly));
+        assertDoesNotThrow(() -> a.insert(wordWithNumbers));
+    }
+
+    @Test
+    void searchCaseInsensitive() {
+        // Проверка поиска без учета регистра
+        a.insert("TestWord123");
+
+        assertTrue(a.search("testword123"));
+        assertTrue(a.search("TESTWORD123"));
+        assertTrue(a.search("tEsTwOrD123"));
+    }
+
+    @Test
+    void searchWithNumbers() {
+        // Проверка поиска слов с цифрами
+        a.insert("abc123");
+        a.insert("123abc");
+        a.insert("a1b2c3");
+
+        assertTrue(a.search("abc123"));
+        assertTrue(a.search("123abc"));
+        assertTrue(a.search("a1b2c3"));
+        assertFalse(a.search("a1b2c")); // Неполное совпадение
+    }
+
+    @Test
+    void prefixSearchWithNumbers() {
+        // Поиск по префиксу с цифрами
+        a.insert("data123");
+        a.insert("data456");
+        a.insert("dataset789");
+
+        ArrayList<String> result = a.searchWithPrefix("data");
+        assertEquals(3, result.size());
+        assertTrue(result.contains("data123"));
+        assertTrue(result.contains("data456"));
+        assertTrue(result.contains("dataset789"));
+    }
+
+    @Test
+    void caseSensitivePrefixSearch() {
+        // Проверка чувствительности к регистру в префиксах
+        a.insert("Apple123");
+        a.insert("apple456");
+
+        ArrayList<String> upperCaseResult = a.searchWithPrefix("APPLE");
+        ArrayList<String> lowerCaseResult = a.searchWithPrefix("apple");
+
+        // В зависимости от реализации - ожидать 0 или 2 результата
+        assertTrue(upperCaseResult == null || upperCaseResult.isEmpty());
+        assertEquals(2, lowerCaseResult.size());
+    }
+
+    @Test
+    void deleteMixedCaseWord() {
+        // Удаление слова с разным регистром
+        String word = "DeLeTeMe123";
+        a.insert(word);
+
+        assertTrue(a.search(word));
+        a.deletion(word);
+        assertFalse(a.search(word));
+    }
+
+    @Test
+    void specialCharactersInWord() {
+        // Проверка обработки спецсимволов
+        String validWord = "valid123";
+        String invalidWord = "inv@lid!";
+
+        assertDoesNotThrow(() -> a.insert(validWord));
+        assertThrows(TrieExceptions.class, () -> a.insert(invalidWord));
+    }
 }
